@@ -95,7 +95,7 @@ namespace Toolbox.Scheduler.Svc
                     if (t.EndDateUTC != null)
                         trig = trig.EndAt(new DateTimeOffset(t.EndDateUTC.Value));
 
-                    trig = trig.WithSimpleSchedule(x=>
+                    trig = trig.WithSimpleSchedule(x =>
                     {
                         switch (t.SimpleTriggerType)
                         {
@@ -120,7 +120,7 @@ namespace Toolbox.Scheduler.Svc
                             x = x.RepeatForever();
                         else
                             x = x.WithRepeatCount(t.RepeatCount);
-                    })
+                    });
                       
 
                     scheduler.ScheduleJob(job, trig.Build());
