@@ -51,11 +51,7 @@ namespace Toolbox.Scheduler.Svc
                     }
                 });
 
-                // some sleep to show what's happening
-                //Thread.Sleep(TimeSpan.FromSeconds(60));
-
-                // and last shut down the scheduler when you are ready to close your program
-                //scheduler.Shutdown();
+                // TODO : Load persisted triggers - Use persiatance module (SQLite DB module)
             }
             catch (SchedulerException se)
             {
@@ -73,6 +69,7 @@ namespace Toolbox.Scheduler.Svc
         {
             switch (trigger.TriggerType)
             {
+                #region Simpletrigger
                 case TriggerType.Simple:
                     var t = (SimpleTrigger)trigger;
 
@@ -128,7 +125,10 @@ namespace Toolbox.Scheduler.Svc
                     // TODO : Persist in file
 
                     break;
+                #endregion
+
                 case TriggerType.Calendar:
+                    
                     break;
             }
 

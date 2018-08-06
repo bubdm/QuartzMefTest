@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{847A71DB-BD35-4CF1-BB5B-85918ECABD45}</ProjectGuid>
+    <ProjectGuid>{072D0644-50FA-4475-976E-A28A57CAB351}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Toolbox.Scheduler.Interfaces</RootNamespace>
-    <AssemblyName>Toolbox.Scheduler.Interfaces</AssemblyName>
+    <RootNamespace>PersistanceModule</RootNamespace>
+    <AssemblyName>PersistanceModule</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,24 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPesistanceContract.cs" />
-    <Compile Include="IPluginContext.cs" />
-    <Compile Include="IToolboxFullJob.cs" />
-    <Compile Include="IToolboxJob.cs" />
-    <Compile Include="IToolboxJobListener.cs" />
-    <Compile Include="IToolBoxTrigger.cs" />
-    <Compile Include="JobExecutionContext.cs" />
+    <Compile Include="PersistanceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ToolboxJob.cs" />
-    <Compile Include="ToolboxJobListener.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EntityFramework">
-      <Version>6.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="Quartz">
-      <Version>2.6.2</Version>
-    </PackageReference>
+    <ProjectReference Include="..\Toolbox.Scheduler.Interfaces\Toolbox.Scheduler.Interfaces.csproj">
+      <Project>{847A71DB-BD35-4CF1-BB5B-85918ECABD45}</Project>
+      <Name>Toolbox.Scheduler.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
