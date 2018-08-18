@@ -11,5 +11,6 @@ namespace Toolbox.Scheduler.Interfaces
     {
         IJobDetail GenerateJobDetail();
         IEnumerable<ITrigger> GenerateJobTriggers();
+        string Description { get; }
     }
 }
