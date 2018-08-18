@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quartz;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -15,5 +16,19 @@ namespace Toolbox.Scheduler.Svc.DTO
     {
         public SimpleTriggerType SimpleTriggerType { get; set; }
         public int Interval { get; set; }
+
+        //public SimpleTrigger ToDTO(this ITrigger trig)
+        //{
+        //    return new SimpleTrigger()
+        //    {
+        //    };
+        //}
+
+        //public ITrigger FromDTO(ITrigger trig)
+        //{
+        //    return new SimpleTrigger()
+        //    {
+        //    };
+        //}
     }
 }

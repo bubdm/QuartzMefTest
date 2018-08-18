@@ -13,6 +13,8 @@ namespace JobSet2
     [Export(typeof(IToolboxFullJob))]
     public class JobSet21 : IToolboxFullJob
     {
+        public string Description => "Test 2.1";
+
         public IJobDetail GenerateJobDetail()
         {
             IJobDetail job = JobBuilder.Create<Job21>()

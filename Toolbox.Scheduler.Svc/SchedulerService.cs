@@ -137,7 +137,43 @@ namespace Toolbox.Scheduler.Svc
 
         public IEnumerable<AbstractTrigger> GetTriggerList(string jobGroupName, string jobName)
         {
-            return Triggers.Where(p => p.JobKey.Group == jobGroupName & p.JobKey.Name == jobName).ToList();
+            var result = new List<AbstractTrigger>();
+
+            var triggers = Triggers.ToList();
+            if (!string.IsNullOrEmpty(jobGroupName))
+            {
+                triggers = triggers.Where(p => p.JobKey.Group == jobGroupName).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(jobName))
+            {
+                triggers = triggers.Where(p => p.JobKey.Name == jobName).ToList();
+            }
+
+            triggers.ToList().ForEach(p =>
+            {
+                AbstractTrigger trig;
+                if (p.CalendarName == null)
+                {
+                    trig = new SimpleTrigger()
+                    {
+                        GroupName = p.Key.Group,
+                        Name = p.Key.Name,
+                        EndDateUTC = new DateTime(p.EndTimeUtc),
+
+                    };
+                }
+                else
+                {
+                    trig = new CalendarTrigger()
+                    {
+                    };
+                }
+
+                result.Add(trig);
+            });
+
+            return result;
         }
     }
 }

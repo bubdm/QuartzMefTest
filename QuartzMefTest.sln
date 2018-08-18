@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBoxCoreJobs", "ToolBoxC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppsJobs", "AppsJobs\AppsJobs.csproj", "{17804B3E-A75A-402B-8445-CDD09CE01E4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps.Database", "Apps.Database\Apps.Database.csproj", "{EA9F4064-6A62-45B3-8D97-5243F5A175A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{17804B3E-A75A-402B-8445-CDD09CE01E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17804B3E-A75A-402B-8445-CDD09CE01E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17804B3E-A75A-402B-8445-CDD09CE01E4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA9F4064-6A62-45B3-8D97-5243F5A175A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA9F4064-6A62-45B3-8D97-5243F5A175A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA9F4064-6A62-45B3-8D97-5243F5A175A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA9F4064-6A62-45B3-8D97-5243F5A175A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{03E69A65-8F96-43DB-A3F8-2F72805E4DE0} = {4AB4585D-C9E6-4C14-A124-1C1EB6E206B1}
 		{BAB527D1-67FC-4C0F-A393-2D2FD0D7519E} = {C3A54A81-C66F-45D7-9E11-7C3E290ABEEB}
 		{17804B3E-A75A-402B-8445-CDD09CE01E4C} = {C3A54A81-C66F-45D7-9E11-7C3E290ABEEB}
+		{EA9F4064-6A62-45B3-8D97-5243F5A175A8} = {4AB4585D-C9E6-4C14-A124-1C1EB6E206B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AA2D648-D402-4197-90B8-6BEB1F79B904}
