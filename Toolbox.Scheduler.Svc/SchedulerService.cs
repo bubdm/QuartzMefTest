@@ -73,13 +73,19 @@ namespace Toolbox.Scheduler.Svc
                     {
                         foreach (var trig in triggers.ToList())
                         {
-                            scheduler.ScheduleJob(job, trig);
+                            if (scheduler.GetTrigger(trig.Key) != null)
+                            {
+                                // if trigger exist in DB replace it because it may have change since last execution
+                                scheduler.RescheduleJob(trig.Key, trig);
+                            }
+                            else
+                            {
+                                scheduler.ScheduleJob(job, trig);
+                            }
                             Triggers.Add(trig.ToSimpleTrigger());
                         }
                     }
                 });
-
-                // TODO : Load persisted triggers - Use persiatance module (SQLite DB module)
             }
             catch (SchedulerException se)
             {
@@ -148,10 +154,17 @@ namespace Toolbox.Scheduler.Svc
                             x = x.WithRepeatCount(t.RepeatCount);
                     });
 
+                    var newTrigger = trig.Build();
 
-                    scheduler.ScheduleJob(job, trig.Build());
-
-                    // TODO : Persist in file
+                    if (scheduler.GetTrigger(newTrigger.Key) != null)
+                    {
+                        // if trigger exist in DB replace it
+                        scheduler.RescheduleJob(newTrigger.Key, newTrigger);
+                    }
+                    else
+                    {
+                        scheduler.ScheduleJob(job, newTrigger);
+                    }
 
                     break;
                 #endregion
@@ -227,7 +240,7 @@ namespace Toolbox.Scheduler.Svc
 
         private void CreateQuartzNetTables()
         {
-            //if (!File.Exists("ToolBox.Scheduler.db"))
+            if (!File.Exists("ToolBox.Scheduler.db"))
             {
                 using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=ToolBox.Scheduler.db;Version=3;Foreign Keys=ON;"))
                 {

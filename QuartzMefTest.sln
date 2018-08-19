@@ -16,6 +16,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toolbox.Scheduler.Interfaces", "Toolbox.Scheduler.Interfaces\Toolbox.Scheduler.Interfaces.csproj", "{847A71DB-BD35-4CF1-BB5B-85918ECABD45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toolbox.Scheduler.Svc", "Toolbox.Scheduler.Svc\Toolbox.Scheduler.Svc.csproj", "{BDDC0230-3226-4661-B888-7ECA8271B1A6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{17804B3E-A75A-402B-8445-CDD09CE01E4C} = {17804B3E-A75A-402B-8445-CDD09CE01E4C}
+		{89FC296F-F7A1-4C7C-8F5C-29FF194EC218} = {89FC296F-F7A1-4C7C-8F5C-29FF194EC218}
+		{A6DA8175-8D42-4E43-895F-6B07173B1B25} = {A6DA8175-8D42-4E43-895F-6B07173B1B25}
+		{BAB527D1-67FC-4C0F-A393-2D2FD0D7519E} = {BAB527D1-67FC-4C0F-A393-2D2FD0D7519E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toolbox.Persistance.Svc", "Toolbox.Persistance.Svc\Toolbox.Persistance.Svc.csproj", "{BC89E158-B5CA-4829-95B1-3E2D1FA3DC23}"
 EndProject
