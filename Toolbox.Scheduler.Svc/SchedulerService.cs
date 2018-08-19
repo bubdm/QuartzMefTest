@@ -173,8 +173,6 @@ namespace Toolbox.Scheduler.Svc
 
                     break;
             }
-
-            throw new NotImplementedException();
         }
 
         //public IList<string> GetTriggersGroupsList()
