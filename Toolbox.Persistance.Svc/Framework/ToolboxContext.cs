@@ -4,28 +4,29 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toolbox.Persistance.Svc.Model;
 using Toolbox.Scheduler.Interfaces;
 
 namespace Toolbox.Persistance.Svc.Framework
 {
-    public class Context : BaseContext
+    public class ToolboxContext : BaseContext
     {
         // Fill this list using MEF - check for the IPluginContext interface on assemblies
         public List<IPluginContext> MefLoadedPlugins;
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<ClassA>().ToTable("TableB", "Schema_1");
-            //modelBuilder.Entity<ClassA>().HasKey(_a => _a.Id);
-
-            //modelBuilder.Entity<ClassB>().ToTable("TableB", "Schema_1");
-            //modelBuilder.Entity<ClassB>().HasKey(_b => _b.Id);
+            modelBuilder.Entity<Versions>().ToTable("Versions", "Toolbox");
+            modelBuilder.Entity<Versions>().HasKey(e => e.ID);
 
             // TODO : Load Mef plugins
 
             if (MefLoadedPlugins != null)
                 foreach (var pluginContext in MefLoadedPlugins)
-                    pluginContext.Setup(modelBuilder);
+                {
+                    //pluginContext.UpgradeDB()
+                    pluginContext.Setup(modelBuilder, this);
+                }
         }
     }
 }

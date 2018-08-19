@@ -13,6 +13,12 @@ namespace Toolbox.Persistance.Svc.Framework
         {
             try { Set<T>().Add(item); return true; } catch { return false; }
         }
+
+        public IQueryable<T> Get<T>() where T : class
+        {
+            try { return Set<T>().AsQueryable(); } catch { return null; }
+        }
+
         public bool Save()
         {
             try { SaveChanges(); return true; } catch { return false; }

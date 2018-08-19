@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Toolbox.Scheduler.Svc
+namespace Scheduler.Database
 {
     [DataContract]
     public enum SimpleTriggerType { second, minutes, hours, days, weeks }

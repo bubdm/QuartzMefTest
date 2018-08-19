@@ -9,6 +9,10 @@ namespace Toolbox.Scheduler.Interfaces
 {
     public interface IPluginContext
     {
-        void Setup(DbModelBuilder modelBuilder);
+        int CurrentVersion { get; }
+
+        void Setup(DbModelBuilder modelBuilder, DbContext context);
+
+        void UpgradeDB(int targetVersion);
     }
 }

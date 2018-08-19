@@ -1,31 +1,59 @@
 ﻿using Quartz;
 using Quartz.Impl;
+using Quartz.Impl.Matchers;
 using QuartzMefLib.Framework;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
-using Toolbox.Scheduler.Svc.DTO;
 
 namespace Toolbox.Scheduler.Svc
 {
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class SchedulerService : ISchedulerService
     {
         private IScheduler scheduler;
-        private List<IJobDetail> Jobs = new List<IJobDetail>();
-        private List<ITrigger> Triggers = new List<ITrigger>();
+        //private List<IJobDetail> Jobs = new List<IJobDetail>();
+        //private List<ITrigger> Triggers = new List<ITrigger>();
+        private List<AbstractTrigger> Triggers = new List<AbstractTrigger>();
+
+        public NameValueCollection LocalConfig =>
+            new NameValueCollection
+        {
+            { "quartz.scheduler.instanceName", "ToolboxScheduler" },
+            { "quartz.scheduler.instanceId", "ToolboxScheduler" },
+            { "quartz.threadPool.type", "Quartz.Simpl.SimpleThreadPool, Quartz" },
+            { "quartz.threadPool.threadCount", "10" },
+            { "quartz.jobStore.type", "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
+            { "quartz.jobStore.useProperties", "true" },
+            { "quartz.jobStore.dataSource", "default" },
+            { "quartz.jobStore.tablePrefix", "QRTZ_" },
+            { "quartz.jobStore.driverDelegateType", "Quartz.Impl.AdoJobStore.SQLiteDelegate, Quartz" },
+            { "quartz.dataSource.default.provider", "SQLite-10" },
+            { "quartz.dataSource.default.connectionString", "Data Source=ToolBox.Scheduler.db;Version=3;Foreign Keys=ON;" },
+        };
 
         public SchedulerService()
         {
             try
             {
+                // Init DB
+                this.CreateQuartzNetTables();
+
                 //Configure simple logging
                 Common.Logging.LogManager.Adapter = new Common.Logging.Simple.ConsoleOutLoggerFactoryAdapter { Level = Common.Logging.LogLevel.Info };
 
                 // Grab the Scheduler instance from the Factory 
-                scheduler = StdSchedulerFactory.GetDefaultScheduler();
+                // Configure the Scheduler
+                ISchedulerFactory schedFact = new StdSchedulerFactory(LocalConfig);
+
+                // get a scheduler
+                scheduler = schedFact.GetScheduler();
 
                 // and start it off
                 scheduler.Start();
@@ -38,7 +66,7 @@ namespace Toolbox.Scheduler.Svc
                 importer.JobSets.ToList().ForEach(p =>
                 {
                     var job = p.GenerateJobDetail();
-                    Jobs.Add(job);
+                    //Jobs.Add(job);
 
                     var triggers = p.GenerateJobTriggers();
                     if (triggers != null)
@@ -46,7 +74,7 @@ namespace Toolbox.Scheduler.Svc
                         foreach (var trig in triggers.ToList())
                         {
                             scheduler.ScheduleJob(job, trig);
-                            Triggers.Add(trig);
+                            Triggers.Add(trig.ToSimpleTrigger());
                         }
                     }
                 });
@@ -62,19 +90,20 @@ namespace Toolbox.Scheduler.Svc
 
         ~SchedulerService()
         {
-            scheduler.Shutdown();
+            scheduler?.Shutdown();
         }
 
         public void AddTriggerToJob(AbstractTrigger trigger)
         {
+            Triggers.Add(trigger);
+
             switch (trigger.TriggerType)
             {
                 #region Simpletrigger
                 case TriggerType.Simple:
                     var t = (SimpleTrigger)trigger;
 
-                    var job = Jobs.FirstOrDefault(p => p.Key.Group == t.JobGroupName && p.Key.Name == t.JobName);
-
+                    var job = scheduler.GetJobDetail(new JobKey(t.JobName, t.JobGroupName));
                     if (job == null)
                     {
                         throw new Exception("Job not found");
@@ -118,7 +147,7 @@ namespace Toolbox.Scheduler.Svc
                         else
                             x = x.WithRepeatCount(t.RepeatCount);
                     });
-                      
+
 
                     scheduler.ScheduleJob(job, trig.Build());
 
@@ -128,52 +157,91 @@ namespace Toolbox.Scheduler.Svc
                 #endregion
 
                 case TriggerType.Calendar:
-                    
+
                     break;
             }
 
             throw new NotImplementedException();
         }
 
+        //public IList<string> GetTriggersGroupsList()
+        //{
+        //    return scheduler.GetTriggerGroupNames();
+        //}
+
+        //public IEnumerable<AbstractTrigger> GetTriggerList(string TriggerGroupName)
+        //{
+        //    var allTriggerKeys = scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
+
+        //    var result = new List<AbstractTrigger>();
+
+        //    allTriggerKeys.ToList().ForEach(p =>
+        //    {
+        //        ITrigger trigger = scheduler.GetTrigger(p);
+
+        //        AbstractTrigger trig;
+        //        if (trigger.CalendarName == null)
+        //        {
+        //            var internalTrig = (ISimpleTrigger)trigger;
+        //            trig = new SimpleTrigger()
+        //            {
+        //                GroupName = internalTrig.Key.Group,
+        //                Name = internalTrig.Key.Name,
+        //                EndDateUTC = internalTrig.EndTimeUtc?.DateTime,
+        //                StartDateUTC = internalTrig.StartTimeUtc.DateTime,
+        //                JobGroupName = internalTrig.JobKey.Group,
+        //                JobName = internalTrig.JobKey.Name,
+        //                TriggerType = TriggerType.Simple,
+        //                RepeatCount = internalTrig.RepeatCount,
+        //            };
+        //        }
+        //        else
+        //        {
+        //            trig = new CalendarTrigger()
+        //            {
+        //            };
+        //        }
+
+        //        result.Add(trig);
+        //    });
+
+        //    return result;
+        //}
+
         public IEnumerable<AbstractTrigger> GetTriggerList(string jobGroupName, string jobName)
         {
-            var result = new List<AbstractTrigger>();
+            var result = Triggers;
 
-            var triggers = Triggers.ToList();
             if (!string.IsNullOrEmpty(jobGroupName))
             {
-                triggers = triggers.Where(p => p.JobKey.Group == jobGroupName).ToList();
+                result = result.Where(p => p.JobGroupName == jobGroupName).ToList();
             }
 
             if (!string.IsNullOrEmpty(jobName))
             {
-                triggers = triggers.Where(p => p.JobKey.Name == jobName).ToList();
+                result = result.Where(p => p.JobName == jobName).ToList();
             }
-
-            triggers.ToList().ForEach(p =>
-            {
-                AbstractTrigger trig;
-                if (p.CalendarName == null)
-                {
-                    trig = new SimpleTrigger()
-                    {
-                        GroupName = p.Key.Group,
-                        Name = p.Key.Name,
-                        EndDateUTC = new DateTime(p.EndTimeUtc),
-
-                    };
-                }
-                else
-                {
-                    trig = new CalendarTrigger()
-                    {
-                    };
-                }
-
-                result.Add(trig);
-            });
 
             return result;
         }
+
+        private void CreateQuartzNetTables()
+        {
+            //if (!File.Exists("ToolBox.Scheduler.db"))
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=ToolBox.Scheduler.db;Version=3;Foreign Keys=ON;"))
+                {
+                    connection.Open();
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        command.CommandType = System.Data.CommandType.Text;
+                        command.CommandText = File.ReadAllText("tables_sqlite.sql");
+                        command.ExecuteNonQuery();
+                    }
+                    connection.Close();
+                }
+            }
+        }
     }
 }
+

@@ -67,6 +67,7 @@
     <Compile Include="Framework\IRepository.cs" />
     <Compile Include="Framework\ToolboxContext.cs" />
     <Compile Include="IPersistanceService.cs" />
+    <Compile Include="Model\Versions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PersistanceService.cs" />
   </ItemGroup>

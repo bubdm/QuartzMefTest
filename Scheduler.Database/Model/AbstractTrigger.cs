@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Toolbox.Scheduler.Svc
+namespace Scheduler.Database
 {
     public enum TriggerType { Simple, Calendar }
 
